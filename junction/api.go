@@ -1,6 +1,8 @@
 package main
 
 import (
+	"strings"
+
 	"github.com/jesseokeya/goChat/database"
 )
 
@@ -16,4 +18,6 @@ type API struct {
 func main() {
 	db := api.db
 	s := db.ConnectToDatabase()
+	dbName := strings.ToLower(db.GetDbName())
+	//s.DB().C(dbName).Insert(user)
 }
