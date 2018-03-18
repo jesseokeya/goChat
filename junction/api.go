@@ -1,11 +1,12 @@
-package main
+package junction
 
 import (
 	"strings"
 
+	"gopkg.in/mgo.v2"
+
 	"github.com/jesseokeya/goChat/database"
 	"github.com/jesseokeya/goChat/models"
-	"gopkg.in/mgo.v2/bson"
 )
 
 var (
@@ -14,21 +15,16 @@ var (
 
 // API creates an api struct which connects logics with the database
 type API struct {
-	db database.DB
+	db      database.DB
+	session *mgo.Session
 }
 
-func main() {
-	db := api.db
-	s := db.ConnectToDatabase()
-	dbName := strings.ToLower(db.GetDbName())
-	// userDataTest creates new test user for database
+func init() {
+	api.session = api.db.ConnectToDatabase()
+}
 
-	userDataTest := models.User{
-		ID:             bson.NewObjectId(),
-		FirstName:      "Jesse",
-		LastName:       "Okeya",
-		Description:    "Software Developer Intern At Qlik",
-		AccountCreated: bson.Now(),
-	}
-	s.DB(dbName).C(dbName).Insert(userDataTest)
+// CreateUser creates a new user in the database
+func (a API) CreateUser(u models.User) {
+	dbName := strings.ToLower(api.db.GetDbName())
+	a.session.DB(dbName).C("Users").Insert(u)
 }
